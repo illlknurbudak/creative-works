@@ -231,6 +231,73 @@
       color: var(--accent);
     }
 
+    /* ── nav ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-top {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    .nav-top a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: var(--fg);
+      text-decoration: none;
+      padding: 12px 16px;
+      border-right: 1px solid var(--line);
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-top a:last-child {
+      border-right: none;
+    }
+
+    .nav-top a:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .nav-top a.active {
+      color: var(--accent);
+    }
+
+    .nav-sub {
+      display: none;
+      padding: 16px 20px;
+      border-top: 1px solid var(--line);
+      background: var(--bg);
+    }
+
+    .nav-sub.open {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 24px;
+    }
+
+    .nav-sub a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 300;
+      color: var(--fg-soft);
+      text-decoration: none;
+      padding: 4px 0;
+      transition: color 0.2s;
+    }
+
+    .nav-sub a:hover {
+      color: var(--fg);
+    }
+
     /* ── playful dot ── */
     .dot-accent {
       display: inline-block;
@@ -250,6 +317,7 @@
 
     /* ── responsive ── */
     @media (max-width: 720px) {
+      nav { position: relative; }
       .page { padding: 60px 20px 60px; }
 
       .project {
@@ -270,7 +338,27 @@
 </head>
 <body>
 
-  <div class="page">
+  <nav>
+    <div class="nav-top">
+      <a href="index.html" class="active">Home</a>
+      <a href="#">Archive</a>
+      <a href="#">Score</a>
+      <a href="#">Loop</a>
+      <a href="print.html">Print</a>
+      <a href="#">Map</a>
+      <a href="about.html">(?)</a>
+    </div>
+    <div class="nav-sub open">
+      <a href="index.html">Work (Projects)</a>
+      <a href="#">System (Rules)</a>
+      <a href="#">Proccess</a>
+      <a href="#">Motion</a>
+      <a href="#">İnfo</a>
+      <a href="#">Contact</a>
+    </div>
+  </nav>
+
+  <div class="page" style="padding-top:140px;">
 
     <header>
       <p class="name">ilknur <em>budak</em> <span class="dot-accent"></span></p>
@@ -335,11 +423,79 @@
         </div>
       </article>
 
+      <div class="sep">
+        <div class="sep-line"></div>
+        <span class="sep-icon">~</span>
+        <div class="sep-line"></div>
+      </div>
+
+      <article class="project">
+        <div class="project-text">
+          <p class="project-num">03</p>
+          <h2 class="project-title">Pareidolia</h2>
+          <p class="project-subtitle">Gordugunu Sandigin Sey</p>
+          <p class="project-desc">
+            40 saniyelik interaktif bir deneyim. Bulutlar, su, agac kabugu, toprak ve kus surusu &mdash;
+            bes dogal sahnede alginin sinirlari test ediliyor.
+            Yuzsuz yuzeylerden yuz gorur musun? Nefes ritmine senkronize bir yolculuk.
+          </p>
+          <div class="tags">
+            <span>three.js</span>
+            <span>gsap</span>
+            <span>pareidolia</span>
+          </div>
+          <div class="actions">
+            <a href="pareidolia/" class="btn-fill">canli demo</a>
+            <a href="https://github.com/illlknurbudak/080226_WC" class="btn-line">kaynak</a>
+          </div>
+        </div>
+        <div class="project-preview">
+          <iframe src="pareidolia/" loading="lazy" sandbox="allow-scripts"></iframe>
+        </div>
+      </article>
+
+      <div class="sep">
+        <div class="sep-line"></div>
+        <span class="sep-icon">~</span>
+        <div class="sep-line"></div>
+      </div>
+
+      <article class="project">
+        <div class="project-text">
+          <p class="project-num">04</p>
+          <h2 class="project-title">INK</h2>
+          <p class="project-subtitle">Anonim Portre Kaliintilari</p>
+          <p class="project-desc">
+            Kagit uzerinde murekkep &mdash; firca darbeleriyle olusan anonim portreler,
+            metin fragmanlari ve soyut formlar. Dijital degil, elle uretilmis,
+            taranmis kalintilarin arsivi.
+          </p>
+          <div class="tags">
+            <span>ink</span>
+            <span>paper</span>
+            <span>brush</span>
+          </div>
+          <div class="actions">
+            <a href="print.html" class="btn-fill">galeri</a>
+          </div>
+        </div>
+        <div class="project-preview" style="background:#f5f4f2;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;padding:4px;">
+          <img src="ink/a.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" alt="ink">
+          <img src="ink/c.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" alt="ink">
+          <img src="ink/d.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" alt="ink">
+          <img src="ink/e.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" alt="ink">
+        </div>
+      </article>
+
     </section>
 
     <footer>
       <p>algoritmalar nefes alir, pikseller ses olur</p>
-      <a href="https://github.com/illlknurbudak">github</a>
+      <div style="display:flex;gap:16px;">
+        <a href="https://github.com/illlknurbudak">github</a>
+        <a href="https://www.instagram.com/llkn0r/">instagram</a>
+        <a href="https://www.behance.net/illlknurbudak">behance</a>
+      </div>
     </footer>
 
   </div>
