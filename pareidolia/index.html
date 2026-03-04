@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pareidolia — Gördüğünü Sandığın Şey</title>
+  <script type="module" crossorigin src="/creative-works/pareidolia/assets/index-Cx5nACDu.js"></script>
+  <link rel="stylesheet" crossorigin href="/creative-works/pareidolia/assets/index-CQGMcp3r.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+      <div class="loading-text">.</div>
+    </div>
+
+    <!-- Main Canvas -->
+    <canvas id="canvas"></canvas>
+
+    <!-- UI Overlay -->
+    <div id="ui-overlay" class="ui-overlay hidden">
+      <!-- Progress Indicator -->
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+
+      <!-- Scene Indicators -->
+      <div class="scene-dots">
+        <span class="dot" data-scene="0"></span>
+        <span class="dot" data-scene="1"></span>
+        <span class="dot" data-scene="2"></span>
+        <span class="dot" data-scene="3"></span>
+        <span class="dot" data-scene="4"></span>
+      </div>
+
+      <!-- Text Overlay -->
+      <div class="text-overlay">
+        <p class="question"></p>
+      </div>
+    </div>
+
+    <!-- Final Question -->
+    <div id="final" class="final hidden">
+      <p class="final-question">Gördüğün neydi?</p>
+      <p class="final-sub"></p>
+    </div>
+
+    <!-- Audio Toggle -->
+    <button id="audio-toggle" class="audio-toggle" aria-label="Ses aç/kapat">
+      <span class="audio-icon">◌</span>
+    </button>
+  </div>
+
+</body>
+</html>

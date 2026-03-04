@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Echo Masks</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      font-family: -apple-system, 'Helvetica Neue', sans-serif;
+      color: #333;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      padding: 24px;
+      background: #eee;
+    }
+
+    canvas {
+      border: 1px solid #ddd;
+    }
+
+    aside {
+      width: 240px;
+      background: #fff;
+      padding: 20px;
+      border-left: 1px solid #e0e0e0;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 2px;
+    }
+
+    .subtitle {
+      font-size: 9px;
+      color: #999;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .section {
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: 9px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .key-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      font-size: 11px;
+      color: #555;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .key {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 9px;
+      color: #666;
+      font-family: monospace;
+    }
+
+    .palette-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      margin-top: 6px;
+    }
+
+    .palette-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .hint {
+      margin-top: 16px;
+      font-size: 9px;
+      color: #aaa;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <main id="canvas-container"></main>
+
+  <aside>
+    <h1>ECHO MASKS</h1>
+    <p class="subtitle">Algorithmic Echoes</p>
+
+    <div class="section">
+      <div class="section-title">Presets</div>
+      <div class="key-row"><span>INK (ince)</span><span class="key">1</span></div>
+      <div class="key-row"><span>DENSE (yoğun)</span><span class="key">2</span></div>
+      <div class="key-row"><span>WILD (vahşi)</span><span class="key">3</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Eylemler</div>
+      <div class="key-row"><span>Yeni seed</span><span class="key">N</span></div>
+      <div class="key-row"><span>Blend mode</span><span class="key">B</span></div>
+      <div class="key-row"><span>Temizle</span><span class="key">C</span></div>
+      <div class="key-row"><span>PNG kaydet</span><span class="key">S</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Palet</div>
+      <div class="palette-preview" id="palette-all"></div>
+    </div>
+
+    <p class="hint">
+      İzler birikir, solmaz.<br>
+      B ile blend mode dene.<br>
+      C ile temizle, N ile yeni seed.
+    </p>
+  </aside>
+
+  <script>
+    const colors = [
+      '#ed3b2b', '#efb72b', '#f9a302', '#ee8a20', '#fdd660',
+      '#7da85a', '#344a2e', '#366b34', '#315323', '#92cc5f',
+      '#171d6a', '#100c7b', '#1357c4', '#3a2349', '#616df3',
+      '#f98939', '#d36e20', '#fcca42', '#ec7328',
+      '#28845a', '#b6eea4', '#a2e4af',
+      '#641d1e', '#ef433d'
+    ];
+    const container = document.getElementById('palette-all');
+    colors.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'palette-color';
+      div.style.background = c;
+      container.appendChild(div);
+    });
+  </script>
+
+  <script src="sketch.js"></script>
+
+</body>
+</html>

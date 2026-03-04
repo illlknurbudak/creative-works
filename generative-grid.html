@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generative Grid (Portrait)</title>
+  <style>
+    :root{ --paper:#ffffff; }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html,body{ height:100%; overflow:hidden; }
+
+    body{
+      background:#000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    canvas{
+      display:block;
+      height:100vh;
+      width:auto;
+      image-rendering:pixelated;
+      image-rendering:crisp-edges;
+    }
+
+    .save-btn{
+      position:fixed;
+      top:50%;
+      left:16px;
+      transform:translateY(-50%);
+      padding:10px 16px;
+      border:none;
+      border-radius:8px;
+      background:rgba(11,58,133,0.9);
+      color:#fff;
+      font-size:13px;
+      font-weight:600;
+      cursor:pointer;
+      z-index:10;
+      transition:background 0.2s;
+      font-family:system-ui,sans-serif;
+    }
+    .save-btn:hover{ background:rgba(35,139,255,0.9); }
+    .save-btn.recording{
+      background:rgba(200,30,30,0.9);
+      cursor:default;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="poster"></canvas>
+  <button class="save-btn" id="saveBtn">Kaydet</button>
+
+  <script>
+  (() => {
+    "use strict";
+
+    /* ---------- Canvas ---------- */
+    const canvas = document.getElementById("poster");
+    const ctx = canvas.getContext("2d", { alpha:false });
+
+    /* ---------- Colors ---------- */
+    const PAPER = "#ffffff";
+    const PALETTE = [
+      "#06101f","#071a2f","#08244a","#0a2e66","#0b3a85",
+      "#0b4aa7","#0b5fcb","#0b73e6","#238bff","#4aa3ff",
+      "#74b9ff","#9fd0ff","#bfe3ff","#d7f0ff","#8aa4ff",
+      "#5b78ff","#2b4dff"
+    ];
+    const PAPER_I = PALETTE.length;
+
+    /* ---------- Grid (portrait 9:16) ---------- */
+    const BASE_W = 1080;
+    const BASE_H = 1920;
+    const GRID_Y = 40;
+    const GAP = 1;
+
+    const cell = Math.floor(BASE_H / GRID_Y);
+    const W = Math.floor(BASE_W / cell);
+    const H = Math.floor(BASE_H / cell);
+    const size = cell - GAP;
+
+    // Canvas boyutunu grid'e birebir oturt
+    canvas.width  = W * cell;
+    canvas.height = H * cell;
+    ctx.imageSmoothingEnabled = false;
+
+    const qW = Math.ceil(W / 2);
+    const qH = Math.ceil(H / 2);
+
+    /* ---------- RNG ---------- */
+    function rng(seed){
+      return () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+    }
+    let R = rng((Date.now() ^ ((Math.random()*1e9)>>>0)) >>> 0);
+
+    /* ---------- Helpers ---------- */
+    const mirror = (i,n) => (i < n/2 ? i : n - 1 - i);
+    const idx = (x,y,w) => y*w + x;
+
+    function hash32(x, y, seed){
+      let h = (x * 374761393 + y * 668265263 + seed * 2654435761) >>> 0;
+      h ^= h >>> 13; h = Math.imul(h, 1274126177) >>> 0;
+      h ^= h >>> 16;
+      return h >>> 0;
+    }
+
+    /* ---------- State ---------- */
+    let state = new Uint8Array(qW * qH);
+    let nextState = new Uint8Array(qW * qH);
+
+    function randomColor(){
+      return (R() < 0.28) ? PAPER_I : Math.floor(R() * PALETTE.length);
+    }
+
+    function stampRect(target, minW, maxW, minH, maxH){
+      const maxRW = Math.min(maxW, qW);
+      const maxRH = Math.min(maxH, qH);
+      const rw = Math.min(qW, minW + Math.floor(R() * (maxRW - minW + 1)));
+      const rh = Math.min(qH, minH + Math.floor(R() * (maxRH - minH + 1)));
+
+      const rx = Math.floor(R() * Math.max(1, (qW - rw + 1)));
+      const ry = Math.floor(R() * Math.max(1, (qH - rh + 1)));
+      const col = randomColor();
+
+      for(let y=ry; y<ry+rh; y++){
+        for(let x=rx; x<rx+rw; x++){
+          if (R() < 0.90) target[idx(x,y,qW)] = col;
+        }
+      }
+    }
+
+    function initState(){
+      state.fill(PAPER_I);
+      for(let i=0;i<20;i++) stampRect(state, 2, 6, 2, 7);
+      for(let i=0;i<9;i++) stampRect(state, 4, 10, 7, 15);
+      for(let i=0;i<3;i++) stampRect(state, 6, 12, 10, 18);
+    }
+
+    function evolve(from, out){
+      out.set(from);
+
+      // Bitiş: her evolve'da hücrelerin %40'ını beyaza çevir (agresif erime)
+      if(fadingOut){
+        const erode = Math.floor(qW * qH * 0.40);
+        for(let i=0; i<erode; i++){
+          out[Math.floor(R() * qW * qH)] = PAPER_I;
+        }
+        return;
+      }
+
+      const mutations = 5 + Math.floor(R() * 10);
+      for(let i=0;i<mutations;i++){
+        const x = Math.floor(R() * qW);
+        const y = Math.floor(R() * qH);
+        out[idx(x,y,qW)] = randomColor();
+      }
+
+      const stamps = 1 + Math.floor(R() * 2);
+      for(let i=0;i<stamps;i++) stampRect(out, 2, 5, 2, 5);
+
+      if (R() < 0.30) stampRect(out, 3, 7, 4, 9);
+      if (R() < 0.12) stampRect(out, 5, 10, 6, 13);
+
+      const breaths = Math.floor(qW * qH * 0.025);
+      for(let i=0;i<breaths;i++){
+        const k = Math.floor(R() * qW * qH);
+        if (R() < 0.45) out[k] = PAPER_I;
+      }
+
+      if (R() < 0.25){
+        const row = Math.floor(R() * qH);
+        const dir = R() < 0.5 ? -1 : 1;
+        const base = row * qW;
+        if (dir === 1){
+          const last = out[base + qW - 1];
+          for(let x=qW-1; x>0; x--) out[base + x] = out[base + x - 1];
+          out[base] = last;
+        } else {
+          const first = out[base];
+          for(let x=0; x<qW-1; x++) out[base + x] = out[base + x + 1];
+          out[base + qW - 1] = first;
+        }
+      }
+    }
+
+    /* ========== WEB AUDIO — One-Shot Trigger ========== */
+    // Hücre değiştiğinde TEK SEFER kısa ses (pluck/ping).
+    // Beyaz = sessizlik. Hold = sessizlik. Dissolve = ritim.
+
+    // 17 renk: frekans + dalga + decay süresi (ms)
+    // Koyu = uzun decay (bass pluck), açık = kısa decay (ping)
+    const VOICES = [
+      { f: 130.81, w:"sine",     decay: 280 }, // 0  C3  derin pluck
+      { f: 146.83, w:"sine",     decay: 260 }, // 1  D3  koyu vuruş
+      { f: 164.81, w:"sine",     decay: 240 }, // 2  E3  bass ping
+      { f: 174.61, w:"sine",     decay: 220 }, // 3  F3  low tap
+      { f: 196,    w:"sine",     decay: 200 }, // 4  G3  bass tone
+      { f: 220,    w:"triangle", decay: 180 }, // 5  A3  mid pluck
+      { f: 261.63, w:"triangle", decay: 160 }, // 6  C4  mid tap
+      { f: 293.66, w:"triangle", decay: 150 }, // 7  D4  mid ping
+      { f: 329.63, w:"triangle", decay: 140 }, // 8  E4  bell
+      { f: 392,    w:"sine",     decay: 120 }, // 9  G4  chime
+      { f: 440,    w:"sine",     decay: 110 }, // 10 A4  glass
+      { f: 523.25, w:"sine",     decay: 100 }, // 11 C5  tink
+      { f: 587.33, w:"sine",     decay: 90  }, // 12 D5  ping
+      { f: 659.26, w:"sine",     decay: 80  }, // 13 E5  tick
+      { f: 349.23, w:"triangle", decay: 130 }, // 14 F4  kristal
+      { f: 415.30, w:"triangle", decay: 120 }, // 15 Ab4 spark
+      { f: 493.88, w:"triangle", decay: 110 }, // 16 B4  zap
+    ];
+
+    let audioCtx = null;
+    let masterGain = null;
+    let audioReady = false;
+
+    function initAudio(){
+      if(audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 0.8;
+      masterGain.connect(audioCtx.destination);
+      audioReady = true;
+    }
+
+    // Bir renk için kısa one-shot ses tetikle
+    // count = bu frame'de o renge geçen hücre sayısı → volume
+    function triggerColor(colorIdx, count){
+      if(!audioReady || count === 0) return;
+      const v = VOICES[colorIdx];
+      const now = audioCtx.currentTime;
+      const decaySec = v.decay / 1000;
+
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+
+      osc.type = v.w;
+      osc.frequency.value = v.f;
+
+      // Volume: çok hücre = daha yüksek, ama sınırlı
+      // 1 hücre → 0.15, 10+ hücre → 0.5 civarı
+      const vol = Math.min(0.5, 0.1 + Math.sqrt(count) * 0.12);
+
+      // Envelope: hızlı attack (3ms) → decay → sessizlik
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(vol, now + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.001, now + decaySec);
+
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + decaySec + 0.01);
+    }
+
+    // Önceki frame'in görünen grid durumu
+    const prevVisible = new Uint8Array(qW * qH);
+    prevVisible.fill(PAPER_I); // başta hepsi beyaz
+
+    // Her frame: hücre değişimlerini tespit et, yeni renkleri tetikle
+    function syncAudio(p){
+      if(!audioReady) return;
+
+      // Bu frame'de her renk için kaç YENİ hücre belirdi
+      const newCounts = new Uint16Array(17);
+
+      for(let y=0; y<qH; y++){
+        for(let x=0; x<qW; x++){
+          const k = idx(x, y, qW);
+          const h = hash32(x, y, seed) / 4294967296;
+          const ci = (h < p) ? nextState[k] : state[k];
+
+          // Hücre DEĞİŞTİ ve yeni renk beyaz DEĞİL → tetikle
+          if(ci !== prevVisible[k] && ci !== PAPER_I){
+            newCounts[ci]++;
+          }
+          prevVisible[k] = ci;
+        }
+      }
+
+      // Değişen her renk için one-shot tetikle
+      for(let i=0; i<17; i++){
+        if(newCounts[i] > 0) triggerColor(i, newCounts[i]);
+      }
+    }
+
+    /* ---------- Animation ---------- */
+    const TRANS_MIN = 1600, TRANS_MAX = 3000;
+    const HOLD_MIN  = 400,  HOLD_MAX  = 900;
+
+    let transitionMs = 2000;
+    let holdMs = 600;
+
+    function randomizeSpeed(){
+      transitionMs = TRANS_MIN + Math.floor(R() * (TRANS_MAX - TRANS_MIN));
+      holdMs       = HOLD_MIN  + Math.floor(R() * (HOLD_MAX  - HOLD_MIN));
+    }
+
+    let seed = (Date.now() >>> 0);
+    let t0 = performance.now();
+    let phase = "transition";
+
+    function drawDissolve(p){
+      ctx.fillStyle = PAPER;
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      for(let y=0; y<H; y++){
+        const qy = mirror(y, H);
+        const py = y * cell;
+
+        for(let x=0; x<W; x++){
+          const qx = mirror(x, W);
+          const k = idx(qx, qy, qW);
+
+          const h = hash32(qx, qy, seed) / 4294967296;
+          const useNext = (h < p);
+          const ci = useNext ? nextState[k] : state[k];
+
+          ctx.fillStyle = (ci === PAPER_I) ? PAPER : PALETTE[ci];
+          ctx.fillRect(x * cell, py, size, size);
+        }
+      }
+    }
+
+    function tick(now){
+      const dt = now - t0;
+      let currentP = 1;
+
+      if (phase === "transition"){
+        const transNow = fadingOut ? 800 : transitionMs;
+        currentP = Math.min(1, dt / transNow);
+        drawDissolve(currentP);
+
+        if (currentP >= 1){
+          const tmp = state; state = nextState; nextState = tmp;
+          evolve(state, nextState);
+          seed = (seed * 1103515245 + 12345) >>> 0;
+          phase = "hold";
+          t0 = now;
+        }
+      } else {
+        drawDissolve(1);
+        const holdNow = fadingOut ? 100 : holdMs;
+        if (dt >= holdNow){
+          phase = "transition";
+          t0 = now;
+        }
+      }
+
+      // Her frame: hücre değişimlerini dinle → tetikle
+      if (audioReady) syncAudio(currentP);
+
+      requestAnimationFrame(tick);
+    }
+
+    /* ---------- Reset (Space or click on canvas) ---------- */
+    let fadingOut = false;
+    let audioUnlocked = false;
+
+    function unlockAudio(){
+      if(audioUnlocked) return false;
+      audioUnlocked = true;
+      initAudio();
+      audioCtx.resume();
+      return true; // ilk tıklama sadece ses açtı
+    }
+
+    function resetComposition(){
+      // İlk tıklama sadece sesi başlatır, grid'i bozmaz
+      if(unlockAudio()) return;
+
+      R = rng((Date.now() ^ ((Math.random()*1e9)>>>0)) >>> 0);
+      seed = (Date.now() >>> 0);
+      randomizeSpeed();
+      initState();
+      evolve(state, nextState);
+      phase = "transition";
+      t0 = performance.now();
+      prevVisible.fill(PAPER_I); // ses durumunu sıfırla
+    }
+
+    canvas.addEventListener("pointerdown", resetComposition);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space"){
+        e.preventDefault();
+        resetComposition();
+      }
+    });
+
+    /* ---------- Recording (MP4 on Safari, WebM fallback) ---------- */
+    const saveBtn = document.getElementById("saveBtn");
+    let isRecording = false;
+
+    saveBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (isRecording) return;
+
+      isRecording = true;
+      saveBtn.textContent = "30s";
+      saveBtn.classList.add("recording");
+
+      const stream = canvas.captureStream(30);
+
+      if(audioCtx){
+        const dest = audioCtx.createMediaStreamDestination();
+        masterGain.connect(dest);
+        for(const t of dest.stream.getAudioTracks()) stream.addTrack(t);
+      }
+
+      let mimeType, ext;
+      if (MediaRecorder.isTypeSupported("video/mp4")){
+        mimeType = "video/mp4";
+        ext = "mp4";
+      } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")){
+        mimeType = "video/webm;codecs=vp9";
+        ext = "webm";
+      } else {
+        mimeType = "video/webm";
+        ext = "webm";
+      }
+
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8000000 });
+      const chunks = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `generative-grid-${Date.now()}.${ext}`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        isRecording = false;
+        saveBtn.textContent = "Kaydet";
+        saveBtn.classList.remove("recording");
+      };
+
+      // Kayıt başı: sıfırdan başla — renkler doğar, sesler doğar
+      R = rng((Date.now() ^ ((Math.random()*1e9)>>>0)) >>> 0);
+      seed = (Date.now() >>> 0);
+      randomizeSpeed();
+      initState();
+      state.fill(PAPER_I);          // tamamen beyaz başla
+      evolve(state, nextState);      // ilk renkler nextState'te doğar
+      prevVisible.fill(PAPER_I);     // ses: hepsi yeni sayılacak
+      phase = "transition";
+      t0 = performance.now();
+      fadingOut = false;
+
+      recorder.start();
+
+      const TOTAL = 30;
+      const OUTRO_START = TOTAL - 4; // son 4 saniye beyaza dön
+
+      let remaining = TOTAL;
+      const countdown = setInterval(() => {
+        remaining--;
+        if (remaining > 0){
+          saveBtn.textContent = `${remaining}s`;
+        } else {
+          clearInterval(countdown);
+        }
+      }, 1000);
+
+      // Son 4 saniyede beyaza geçiş başlat
+      setTimeout(() => { fadingOut = true; }, OUTRO_START * 1000);
+
+      setTimeout(() => {
+        clearInterval(countdown);
+        fadingOut = false;
+        recorder.stop();
+      }, TOTAL * 1000);
+    });
+
+    /* ---------- Start ---------- */
+    initState();
+    evolve(state, nextState);
+    requestAnimationFrame(tick);
+  })();
+  </script>
+</body>
+</html>

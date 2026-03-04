@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ilknur budak — creative works</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Space+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0f;
+      color: #e0e0e0;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+
+    header {
+      margin-bottom: 80px;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 60px;
+    }
+
+    .project {
+      border: 1px solid #1a1a2e;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .project:hover {
+      border-color: #333;
+      transform: translateY(-4px);
+    }
+
+    .project-preview {
+      width: 100%;
+      height: 320px;
+      position: relative;
+      overflow: hidden;
+      background: #111;
+    }
+
+    .project-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
+    }
+
+    .project-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent 50%, rgba(10,10,15,0.95));
+      display: flex;
+      align-items: flex-end;
+      padding: 28px;
+    }
+
+    .project-info {
+      padding: 28px;
+    }
+
+    .project-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .project-series {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+    }
+
+    .project-desc {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #999;
+      margin-bottom: 20px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border: 1px solid #222;
+      border-radius: 20px;
+      color: #666;
+    }
+
+    .project-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .project-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 20px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .project-links a:hover {
+      background: #fff;
+      color: #0a0a0f;
+      border-color: #fff;
+    }
+
+    .project-links a.primary {
+      background: #fff;
+      color: #0a0a0f;
+      border-color: #fff;
+    }
+
+    .project-links a.primary:hover {
+      background: transparent;
+      color: #fff;
+    }
+
+    footer {
+      margin-top: 100px;
+      padding-top: 40px;
+      border-top: 1px solid #1a1a2e;
+      text-align: center;
+    }
+
+    footer p {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: #444;
+    }
+
+    footer a {
+      color: #666;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 40px 20px; }
+      h1 { font-size: 1.6rem; }
+      .project-preview { height: 220px; }
+      .project-info { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ilknur budak</h1>
+      <p class="subtitle">Generative Art &amp; Creative Coding</p>
+    </header>
+
+    <section class="projects">
+
+      <!-- Project 1: Generative Grid -->
+      <article class="project">
+        <div class="project-preview">
+          <iframe src="generative-grid.html" loading="lazy" sandbox="allow-scripts"></iframe>
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-info">
+          <h2 class="project-title">Generative Grid</h2>
+          <p class="project-series">Sonik Kaleydoskop</p>
+          <p class="project-desc">
+            Yaşayan bir piksel matrisi. Mavi tonlardan oluşan grid, bilateral simetri içinde sürekli evrilir —
+            her renk değişimi gerçek zamanlı bir nota tetikler. 17 sesli bir synthesizer, görseli sese dönüştürür.
+            Tıkla, dinle, izle.
+          </p>
+          <div class="tags">
+            <span class="tag">Canvas 2D</span>
+            <span class="tag">Web Audio</span>
+            <span class="tag">ChucK</span>
+            <span class="tag">Bilateral Symmetry</span>
+          </div>
+          <div class="project-links">
+            <a href="generative-grid.html" class="primary">Canli Demo</a>
+            <a href="https://github.com/illlknurbudak/creamav">Kaynak Kod</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 2: Pareidolia -->
+      <article class="project">
+        <div class="project-preview">
+          <iframe src="pareidolia/" loading="lazy" sandbox="allow-scripts"></iframe>
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-info">
+          <h2 class="project-title">Pareidolia</h2>
+          <p class="project-series">Gordugunu Sandigin Sey</p>
+          <p class="project-desc">
+            40 saniyelik interaktif bir deneyim. Bulutlar, su, agac kabugu, toprak ve kus surusu —
+            bes dogal sahnede alginin sinirlari test ediliyor. Yuzsuz yuzeylerden yuz gorur musun?
+            Three.js ile insa edilmis, nefes ritmine senkronize bir yolculuk.
+          </p>
+          <div class="tags">
+            <span class="tag">Three.js</span>
+            <span class="tag">GSAP</span>
+            <span class="tag">Pareidolia</span>
+            <span class="tag">Breath Sync</span>
+          </div>
+          <div class="project-links">
+            <a href="pareidolia/" class="primary">Canli Demo</a>
+            <a href="https://github.com/illlknurbudak/080226_WC">Kaynak Kod</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 3: Echo Masks -->
+      <article class="project">
+        <div class="project-preview">
+          <iframe src="echo-masks/" loading="lazy" sandbox="allow-scripts"></iframe>
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-info">
+          <h2 class="project-title">Echo Masks</h2>
+          <p class="project-series">Algorithmic Echoes</p>
+          <p class="project-desc">
+            Perlin noise akis alanlari bilateral simetriye katlanir, parcaciklar iz birakarak
+            maske formlarini olusturur. Her fircadarbesinin altindaki golge derinlik illuzyonu yaratir.
+            Beyin israr eder: bu bir yuz. Algoritma cevap verir: bu sadece gurultu.
+          </p>
+          <div class="tags">
+            <span class="tag">p5.js</span>
+            <span class="tag">Flow Fields</span>
+            <span class="tag">Perlin Noise</span>
+            <span class="tag">Bilateral Symmetry</span>
+          </div>
+          <div class="project-links">
+            <a href="echo-masks/" class="primary">Canli Demo</a>
+            <a href="https://github.com/illlknurbudak/ECHO-MASKS">Kaynak Kod</a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <footer>
+      <p>
+        <a href="https://github.com/illlknurbudak">github</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
