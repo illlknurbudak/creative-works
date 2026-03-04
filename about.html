@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ilknur budak — about</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --fg: #2a2a2a;
+      --fg-soft: #777;
+      --fg-faint: #bbb;
+      --bg: #faf9f7;
+      --accent: #c44;
+      --line: #e8e6e2;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 100px 32px;
+    }
+
+    /* ── back ── */
+    .back {
+      position: fixed;
+      top: 32px;
+      left: 32px;
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--fg-faint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back:hover { color: var(--fg); }
+
+    /* ── name ── */
+    .name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .name .q {
+      font-style: normal;
+      color: var(--accent);
+      font-weight: 300;
+    }
+
+    /* ── sections ── */
+    .sections {
+      margin-top: 64px;
+      display: grid;
+      gap: 56px;
+    }
+
+    .section {
+      position: relative;
+      padding-left: 36px;
+    }
+
+    .section-letter {
+      position: absolute;
+      left: 0;
+      top: -2px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 300;
+      color: var(--fg-faint);
+    }
+
+    .section-line {
+      position: absolute;
+      left: 16px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--line);
+    }
+
+    /* a) — siirsel, serif, italik */
+    .section-a p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.7;
+      color: var(--fg);
+    }
+
+    /* b) — kisa, mono, cool */
+    .section-b p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 300;
+      line-height: 2;
+      color: var(--fg-soft);
+    }
+
+    /* c) — manifesto, sans, yogun */
+    .section-c p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--fg);
+    }
+
+    .section-c p .hot {
+      color: var(--accent);
+    }
+
+    /* ── footer ── */
+    footer {
+      margin-top: 80px;
+      text-align: center;
+    }
+
+    footer a {
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: var(--fg-faint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    footer .links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 600px) {
+      .page { padding: 80px 20px; }
+      .name { font-size: 2rem; }
+      .section-a p { font-size: 1.15rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="back">&larr; works</a>
+
+  <div class="page">
+
+    <h1 class="name">ilknur <span class="q">?</span></h1>
+
+    <div class="sections">
+
+      <div class="section section-a">
+        <span class="section-letter">a)</span>
+        <div class="section-line"></div>
+        <p>
+          Somut hisler<br>
+          bellek ile iliskisinden<br>
+          durmadan hikaye anlatir
+        </p>
+      </div>
+
+      <div class="section section-b">
+        <span class="section-letter">b)</span>
+        <div class="section-line"></div>
+        <p>
+          independent artist<br>
+          anonymous portrait residues<br>
+          paper / digital / motion
+        </p>
+      </div>
+
+      <div class="section section-c">
+        <span class="section-letter">c)</span>
+        <div class="section-line"></div>
+        <p>
+          Karala, hisset, parcala, kesfet, tasarla ve yarat. Bos ve dolu, sessizlik ve kaos. Duyguyu, fikirleri bastir ya da birak. Kiyamette kullerle, obur bir cennette elime gecen her materyalin <span class="hot">bencil ozgurluk sanrisiyla</span>, kapali bir kutunun icindeki sirk hayvani gibi uret, uret ve uret.
+        </p>
+      </div>
+
+    </div>
+
+    <footer>
+      <div class="links">
+        <a href="index.html">works</a>
+        <a href="https://github.com/illlknurbudak">github</a>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
