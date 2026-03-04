@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Generative Grid (Portrait)</title>
+  <title>Generative Grid</title>
   <style>
     :root{ --paper:#ffffff; }
     *{ box-sizing:border-box; margin:0; padding:0; }
@@ -18,8 +18,9 @@
 
     canvas{
       display:block;
-      height:100vh;
-      width:auto;
+      width:100vw;
+      height:auto;
+      max-height:100vh;
       image-rendering:pixelated;
       image-rendering:crisp-edges;
     }
@@ -70,10 +71,10 @@
     ];
     const PAPER_I = PALETTE.length;
 
-    /* ---------- Grid (portrait 9:16) ---------- */
-    const BASE_W = 1080;
-    const BASE_H = 1920;
-    const GRID_Y = 40;
+    /* ---------- Grid (landscape 16:9) ---------- */
+    const BASE_W = 1920;
+    const BASE_H = 1080;
+    const GRID_Y = 24;
     const GAP = 1;
 
     const cell = Math.floor(BASE_H / GRID_Y);
