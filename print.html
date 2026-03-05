@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ilknur budak — print / ink</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --fg: #2a2a2a;
+      --fg-soft: #777;
+      --fg-faint: #bbb;
+      --bg: #faf9f7;
+      --accent: #c44;
+      --line: #e8e6e2;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-top {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    .nav-top a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: var(--fg);
+      text-decoration: none;
+      padding: 12px 16px;
+      border-right: 1px solid var(--line);
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-top a:last-child { border-right: none; }
+    .nav-top a:hover { background: var(--fg); color: var(--bg); }
+    .nav-top a.active { color: var(--accent); }
+
+    /* ── page ── */
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 32px 80px;
+    }
+
+    header { margin-bottom: 56px; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 300;
+      color: var(--fg-faint);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .desc {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--fg-soft);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    /* ── series ── */
+    .series {
+      margin-bottom: 80px;
+    }
+
+    .series-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .series-title {
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    .series-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 300;
+      color: var(--fg-faint);
+    }
+
+    /* ── masonry grid ── */
+    .grid {
+      columns: 4;
+      column-gap: 12px;
+    }
+
+    .grid-item {
+      break-inside: avoid;
+      margin-bottom: 12px;
+      overflow: hidden;
+      border-radius: 4px;
+      background: #eee;
+      cursor: pointer;
+    }
+
+    .grid-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .grid-item:hover img {
+      transform: scale(1.02);
+    }
+
+    /* ── paintings row (2 green + blue portrait) ── */
+    .paintings {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 80px;
+    }
+
+    .painting-item {
+      border-radius: 4px;
+      overflow: hidden;
+      background: #eee;
+      cursor: pointer;
+    }
+
+    .painting-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .painting-item:hover img { transform: scale(1.02); }
+
+    .painting-label {
+      padding: 10px 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 300;
+      color: var(--fg-faint);
+    }
+
+    /* ── lightbox ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,0.92);
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+
+    .lightbox.open { display: flex; }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 2px;
+    }
+
+    .lb-close {
+      position: fixed;
+      top: 24px;
+      right: 32px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .lb-close:hover { color: #fff; }
+
+    /* ── footer ── */
+    footer {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p { font-size: 0.72rem; font-weight: 300; color: var(--fg-faint); }
+
+    footer a {
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--fg-soft);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 900px) {
+      nav { position: relative; }
+      .page { padding: 40px 20px 60px; }
+      .grid { columns: 3; }
+      .paintings { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .grid { columns: 2; }
+      .paintings { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-top">
+      <a href="index.html">Home</a>
+      <a href="archive.html">Archive</a>
+      <a href="index.html#score">Score</a>
+      <a href="index.html#loop">Loop</a>
+      <a href="print.html" class="active">Print</a>
+      <a href="illustration.html">Map</a>
+      <a href="about.html">(?)</a>
+    </div>
+  </nav>
+
+  <div class="page" style="padding-top:80px;">
+
+    <header>
+      <p class="section-label">print / ink / paper</p>
+      <h1>Physical Works</h1>
+      <p class="desc">Mürekkep, kömür, boya — kağıt ve tuval üzerine elle üretilmiş çalışmalar.</p>
+    </header>
+
+    <!-- Paintings / Abstracts -->
+    <div class="series">
+      <div class="series-header">
+        <span class="series-title">Paintings</span>
+        <span class="series-meta">canvas · pastel · mixed</span>
+      </div>
+      <div class="paintings">
+        <div class="painting-item" onclick="openLB(this)">
+          <img src="print/green-soft.png" alt="Green Soft Abstract" loading="lazy">
+          <div class="painting-label">green study I — pastel on paper</div>
+        </div>
+        <div class="painting-item" onclick="openLB(this)">
+          <img src="print/green-canvas.png" alt="Green Canvas" loading="lazy">
+          <div class="painting-label">green study II — acrylic on canvas</div>
+        </div>
+        <div class="painting-item" onclick="openLB(this)">
+          <img src="print/blue-portrait.jpg" alt="Blue Portrait" loading="lazy">
+          <div class="painting-label">portrait study — ink on paper</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ink / Scan series -->
+    <div class="series">
+      <div class="series-header">
+        <span class="series-title">Ink</span>
+        <span class="series-meta">ink · charcoal · brush — scanned originals</span>
+      </div>
+      <div class="grid" id="ink-grid">
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-07.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-08.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-01.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-02.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-09.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-10.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-03.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-11.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-04.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-12.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-13.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-05.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-14.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-15.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-06.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-16.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-17.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-18.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-19.jpg" loading="lazy"></div>
+        <div class="grid-item" onclick="openLB(this)"><img src="print/ink-20.jpg" loading="lazy"></div>
+      </div>
+    </div>
+
+    <footer>
+      <p>kağıt hafızayı tutar</p>
+      <div style="display:flex;gap:16px;">
+        <a href="https://github.com/illlknurbudak">github</a>
+        <a href="https://www.instagram.com/llkn0r/">instagram</a>
+        <a href="https://www.behance.net/illlknurbudak">behance</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lb" onclick="closeLB()">
+    <span class="lb-close">esc / click to close</span>
+    <img id="lb-img" src="" alt="">
+  </div>
+
+  <script>
+    function openLB(el) {
+      const img = el.querySelector('img');
+      document.getElementById('lb-img').src = img.src;
+      document.getElementById('lb').classList.add('open');
+    }
+    function closeLB() {
+      document.getElementById('lb').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLB(); });
+  </script>
+
+</body>
+</html>
